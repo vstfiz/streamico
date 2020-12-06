@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "645744105859",
+    "firebase_url": "https://streamico-cd5a4.firebaseio.com",
+    "project_id": "streamico-cd5a4",
+    "storage_bucket": "streamico-cd5a4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:645744105859:android:1534f882e4a89168c17eb6",
+        "android_client_info": {
+          "package_name": "tech.vstfiz.streamico"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "645744105859-1uurkjag9l32enaq39sei1jafuklpuvo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tech.vstfiz.streamico",
+            "certificate_hash": "b20f917cb5f4ea8e7fbb38acf55608f56771bc61"
+          }
+        },
+        {
+          "client_id": "645744105859-k6kpms8oi9111a86nfdns3s8kc53mlrj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOl4x7IIqtn6pq4OLMCo-DrXOwKIRsslU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "645744105859-k6kpms8oi9111a86nfdns3s8kc53mlrj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
