@@ -139,7 +139,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: globals.darkModeOn ? Colors.black : Colors.black,
+      backgroundColor: globals.darkModeOn ? Colors.black : Colors.white,
       body: ResponsiveWidget(
         portraitLayout: globals.darkModeOn
             ? portraitStackDark(context)
@@ -158,7 +158,7 @@ class _SplashScreenState extends State<SplashScreen> {
           child: SizedBox(
             height: 250,
             width: 180,
-            child: Image.asset('assets/v2.png'),
+            child: Image.asset('assets/v1.png'),
           ),
         ),
         Positioned(
@@ -174,7 +174,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 textStyle: TextStyle(
                     fontSize: 40.0,
                     fontFamily: "Aquire",
-                    color: Colors.white,
+                    color: Colors.black,
                     letterSpacing: 10
                 ),
                 textAlign: TextAlign.start,
@@ -208,7 +208,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   "Streamico",
                 ],
                 textStyle: TextStyle(
-                    fontSize: 60.0,
+                    fontSize: 40.0,
                     fontFamily: "Aquire",
                     color: Colors.white,
                     letterSpacing: 10

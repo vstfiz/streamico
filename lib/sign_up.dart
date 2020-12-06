@@ -1,9 +1,17 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:streamico/fire_auth.dart';
+import 'firebase_database.dart' as fdb;
+import 'globals.dart' as globals;
 
 import 'dashboard.dart';
 import 'login.dart';
@@ -16,6 +24,7 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   bool op1 = true;
   bool op2 = false;
+  File _image;
   TextEditingController _firstNameController = new TextEditingController();
   TextEditingController _lastNameController = new TextEditingController();
   TextEditingController _emailController = new TextEditingController();
@@ -25,6 +34,42 @@ class _SignUpState extends State<SignUp> {
   RegExp phone = new RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
   String defaultImageUrl =
       "https://varithms.tech/storage/assets/display_picture_defaults/";
+  String uploadedImageUrl;
+
+
+  Future getCameraImage() async {
+    final picker = ImagePicker();
+    final pickedFile =
+    await picker.getImage(source: ImageSource.camera, imageQuality: 50);
+
+    setState(() {
+      _image = File(pickedFile.path);
+    });
+    print("Path Value : " + _image.path);
+  }
+
+  Future getGalleryImage() async {
+    final picker = ImagePicker();
+    final pickedFile =
+    await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
+
+    setState(() {
+      _image = File(pickedFile.path);
+    });
+  }
+
+  Future<String> uploadImage() async {
+    print("image upload running");
+    final StorageReference ref = FirebaseStorage.instance.ref().child(
+        'users/${globals.mainUser.uid}/${DateTime
+            .now()
+            .millisecondsSinceEpoch}.jpg');
+    final StorageUploadTask uploadTask = ref.put(_image);
+    await uploadTask.onComplete;
+    var uri = await ref.getDownloadURL();
+    uploadedImageUrl = uri.toString();
+    print(uploadedImageUrl);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -306,50 +351,7 @@ class _SignUpState extends State<SignUp> {
                       ),
                     ),
                   )),
-              Container(
-                  margin: EdgeInsets.only(top: 720, right: 30, left: 30),
-                  height: 50,
-                  width: 50,
-                  color: Colors.white,
-                  child: Center(
-                    child: Text(
-                      'OR',
-                      style:
-                          TextStyle(fontFamily: "Livvic", color: Colors.black),
-                    ),
-                  )),
-              Container(
-                  margin: EdgeInsets.only(top: 720, right: 30, left: 120),
-                  height: 50,
-                  width: 50,
-                  color: Colors.white,
-                  child: RaisedButton(
-                    onPressed: () {},
-                    child: Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                        image: Image.asset('assets/google.png').image,
-                      )),
-                    ),
-                  )),
-              Container(
-                  margin: EdgeInsets.only(top: 720, right: 30, left: 230),
-                  height: 50,
-                  width: 50,
-                  color: Colors.blue,
-                  child: RaisedButton(
-                    onPressed: () {},
-                    child: Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                        image: Image.asset('assets/facebook.png').image,
-                      )),
-                    ),
-                  )),
+              
             ],
           ),
         ));
@@ -378,7 +380,7 @@ class _SignUpState extends State<SignUp> {
                 width: 120,
                 decoration:
                     BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-                child: CachedNetworkImage(
+                child: _image == null?CachedNetworkImage(
                   imageBuilder: (context, imageProvider) => Container(
                     height: 130,
                     width: 130,
@@ -395,17 +397,19 @@ class _SignUpState extends State<SignUp> {
                     ),
                   ),
                   errorWidget: (context, url, error) => Icon(Icons.error),
-                  imageUrl: defaultImageUrl + 'V' + ".png",
+                  imageUrl: defaultImageUrl + _firstNameController.text.substring(0,1) + ".png",
                   width: 120,
                   height: 120,
-                ),
+                ):Image.file(_image,fit: BoxFit.contain,),
               ),
               Container(
                   margin: EdgeInsets.only(top: 500, right: 30, left: 60),
                   height: 60,
                   width: 60,
                   child: RaisedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      getCameraImage();
+                    },
                     child: Icon(Icons.camera_alt),
                   )),
               Container(
@@ -416,7 +420,9 @@ class _SignUpState extends State<SignUp> {
                   height: 60,
                   width: 60,
                   child: RaisedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      getGalleryImage();
+                    },
                     child: Icon(Icons.add),
                   )),
               Container(
@@ -440,22 +446,32 @@ class _SignUpState extends State<SignUp> {
                   width: MediaQuery.of(context).size.width - 60,
                   color: Color(0xFF2E76F1),
                   child: FlatButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_phoneController.text != '' &&
                           _phoneController.text != null) {
                         if (phone.hasMatch(_phoneController.text)) {
-                          Navigator.push(context,
-                              new MaterialPageRoute(builder: (context) {
-                            return DashBoard();
-                          }));
+                          try{
+                            User user = await signUpWithEmail(_emailController.text, _passwordController.text);
+                            fdb.FirebaseDB.createUser(_firstNameController.text+' '+_lastNameController.text, _emailController.text, 910000000000+int.parse(_phoneController.text), _image == null?defaultImageUrl+_firstNameController.text.substring(0,1):uploadedImageUrl ,user.uid);
+                            Navigator.push(context,
+                                new MaterialPageRoute(builder: (context) {
+                                  return DashBoard();
+                                }));
+                          }
+                          catch(e){
+                            Fluttertoast.showToast(
+                                msg: e.toString(),
+                                toastLength: Toast.LENGTH_LONG);
+                          }
+                          
                         } else {
                           Fluttertoast.showToast(
-                              msg: 'Last Name can\'t be empty',
+                              msg: 'Enter valid mobile number',
                               toastLength: Toast.LENGTH_LONG);
                         }
                       } else {
                         Fluttertoast.showToast(
-                            msg: 'First Name can\'t be empty',
+                            msg: 'Mobile can\'t be empty',
                             toastLength: Toast.LENGTH_LONG);
                       }
                     },

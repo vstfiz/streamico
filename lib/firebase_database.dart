@@ -33,7 +33,7 @@ class FirebaseDB {
   }
 
   static Future<bool> createUser(
-      name, mail, gender, id, imageUrl) async {
+      name, mail, uid, id, imageUrl) async {
     globals.mainUser =
         new User(name, id, mail, imageUrl, globals.user.uid);
     FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -41,7 +41,7 @@ class FirebaseDB {
     Map<String, dynamic> userData = new Map<String, dynamic>();
     userData.putIfAbsent('name', () => name);
     userData.putIfAbsent('email', () => mail);
-    userData.putIfAbsent('phone', () => (910000000000+id));
+    userData.putIfAbsent('id', () => (910000000000+id));
     userData.putIfAbsent('uid', () => globals.user.uid);
     userData.putIfAbsent('url', () => imageUrl);
     ref.add(userData);

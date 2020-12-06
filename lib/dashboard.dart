@@ -6,6 +6,7 @@ import 'package:streamico/firebase_database.dart' as fdb;
 import 'package:streamico/globals.dart' as globals;
 import 'package:streamico/responsiveui.dart';
 import 'package:streamico/searching_service.dart';
+import 'package:streamico/settings.dart' as st;
 import 'package:streamico/size_config.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gradient_progress/gradient_progress.dart';
+import 'settings.dart';
 
 import 'calling_page.dart';
 import 'notifications.dart';
@@ -499,13 +501,13 @@ class _DashBoardState extends State<DashBoard>
                   ),
                   child: IconButton(
                     onPressed: () {
-                      // Navigator.of(context).push(
-                      //   MaterialPageRoute(
-                      //     builder: (context) {
-                      //       return Settings();
-                      //     },
-                      //   ),
-                      // );
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return st.Settings();
+                          },
+                        ),
+                      );
                     },
                     icon: Icon(
                       Icons.settings,
@@ -513,7 +515,7 @@ class _DashBoardState extends State<DashBoard>
                       size: 6 * SizeConfig.imageSizeMultiplier,
                     ),
                   )),
-            ),
+              ),
           ],
         ),
       ),
